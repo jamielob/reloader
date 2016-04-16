@@ -10,6 +10,40 @@ More control over hot code push reloading for your production apps.   Designed t
 
 No setup required, just add the package.
 
+
+
+##Possible Refresh Modes
+
+###Refresh instantly
+This is the same as default behaviour in Meteor.  Code updates are refreshed immeidately.
+
+###Refresh on resume 
+Code updates are downloaded in the background while the app is open, but aren't applied until the app is resumed.  Resuming occurs when the app is put into background and then re-opened.  For example, during multi-tasking.
+
+###Refresh on cold start
+Code updates are downloaded in the background while the app is open, but aren't applied until the app is fully closed and then re-opened.  This could be trhough user action or by the phone closing the app in the background because it has been idle for a while or taking up memory.
+
+
+
+##Possible Check Modes
+
+Code updates are always downloaded in the background while the app is open, but we can also force other times to look for latest code.
+
+###Check on resume
+Make an additional check when resuming to make sure we have the latest code update.  This mode takes an additional parameter of an idle cutoff so that we can configure it not to do an additional check if within a certain time - for example, if the user is just multitasking between apps.
+
+###Check on cold start
+This ensures that we always check for the latest version when the app is started fresh.
+
+###Check on first start
+This makes sure we check for the latest code the first time the app is ever started - i.e Just installed.
+
+
+
+
+
+
+
 ##Configuration
 
 There are several configurable options.  You can override them anywhere in your `client/lib` folder.
