@@ -33,10 +33,10 @@ Code updates are always downloaded in the background while the app is open, but 
 Make an additional check when resuming to make sure we have the latest code update.  This mode takes an additional parameter of an idle cutoff so that we can configure it not to do an additional check if within a certain time - for example, if the user is just multitasking between apps.
 
 ###Check on cold start
-This ensures that we always check for the latest version when the app is started fresh.
+This ensures that we always check for the latest version when the app is started fresh, including the first ever start of the app.
 
 ###Check on first start
-This makes sure we check for the latest code the first time the app is ever started - i.e Just installed.
+This makes sure we only do an additional check for the latest code the first time the app is ever started - i.e Just installed.
 
 
 
