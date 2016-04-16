@@ -12,16 +12,24 @@ No setup required, just add the package.
 
 
 
+
+
 ##Possible Refresh Modes
 
 ###Refresh instantly
-This is the same as default behaviour in Meteor.  Code updates are refreshed immeidately.
+This is the same as default behaviour in Meteor with code updates being refreshed immeidately. The only improvement/difference is that the app's splash screen is displayed during the refresh.
+
+`Reloader.refreshInstantly = true;`
 
 ###Refresh on resume 
-Code updates are downloaded in the background while the app is open, but aren't applied until the app is resumed.  Resuming occurs when the app is put into background and then re-opened.  For example, during multi-tasking.
+Code updates are downloaded in the background while the app is open, but aren't applied until the app is resumed.  Resuming occurs when the app is put into background and then re-opened.  For example, during multi-tasking.  The splash screen is held until the app as been refreshed.
+
+`Reloader.refreshOnResume = true;`
 
 ###Refresh on cold start
-Code updates are downloaded in the background while the app is open, but aren't applied until the app is fully closed and then re-opened.  This could be trhough user action or by the phone closing the app in the background because it has been idle for a while or taking up memory.
+Code updates are downloaded in the background while the app is open, but aren't applied until the app is fully closed and then re-opened.  This could be through user action or by the phone closing the app in the background because it has been idle for a while or taking up memory.  The splash screen is held until the app as been refreshed.
+
+`Reloader.refreshOnStart = true;`
 
 
 
@@ -32,11 +40,17 @@ Code updates are always downloaded in the background while the app is open, but 
 ###Check on resume
 Make an additional check when resuming to make sure we have the latest code update.  This mode takes an additional parameter of an idle cutoff so that we can configure it not to do an additional check if within a certain time - for example, if the user is just multitasking between apps.
 
-###Check on cold start
-This ensures that we always check for the latest version when the app is started fresh, including the first ever start of the app.
+`Reloader.checkOnResume = true;`
 
-###Check on first start
-This makes sure we only do an additional check for the latest code the first time the app is ever started - i.e Just installed.
+###Check on cold start
+This ensures that we always check for the latest version when the app is started fresh, including the first ever start of the app.  Until the Meteor API improves we have to make this check under a timer, which you can adjust to suit your app.  During this time the app's splash screen is kept displayed.
+
+`Reloader.checkOnStart = true;`
+
+###Check only on first ever start
+Same as above, except this makes sure we only do an additional check for the latest code the first time the app is ever started - i.e Just installed.
+
+`Reloader.checkOnFirstStart = true;`
 
 
 
