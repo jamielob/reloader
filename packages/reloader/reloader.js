@@ -1,9 +1,3 @@
-/*
-	Todo
-	Reloader.disabled - for quick dev
-*/
-
-
 Reloader = {};
 
 if (!Reloader.downloadDelay) Reloader.downloadDelay = 3000;
@@ -11,11 +5,15 @@ if (!Reloader.releaseDelay) Reloader.releaseDelay = 100;
 if (!Reloader.resumeDelay) Reloader.resumeDelay = 500;
 if (!Reloader.idleCutoff) Reloader.idleCutoff = 1000 * 60 * 10; //10 minutes
 
+
 //Setup the updateAvailable reactiveVar
 Reloader.updateAvailable = new ReactiveVar(false);
 
 //On fresh launch
 Meteor.startup(function() {
+
+	//Set the last start flag
+	localStorage.setItem('reloaderLastStart', Date.now());
 
 	//Hold the launch screen
 	let handle = LaunchScreen.hold();
@@ -105,6 +103,7 @@ document.addEventListener("pause", function() {
 
 //Capture the reload 
 Reload._onMigrate(function (retry) {
+	console.log('asd');
 
 	if (Reloader.instant) {
 
