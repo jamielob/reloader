@@ -53,7 +53,7 @@ Autoupdate._retrySubscription = function() {
           }
         };
 
-        var handle = ClientVersions.find({_id: 'version-cordova'}).observe({
+        ClientVersions.find({_id: 'version-cordova'}).observe({
           added: checkNewVersionDocument,
           changed: checkNewVersionDocument
         });
