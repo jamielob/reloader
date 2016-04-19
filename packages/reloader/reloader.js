@@ -1,9 +1,8 @@
 Reloader = {};
 
-if (!Reloader.downloadDelay) Reloader.downloadDelay = 3000;
-if (!Reloader.releaseDelay) Reloader.releaseDelay = 100;
-if (!Reloader.resumeDelay) Reloader.resumeDelay = 500;
-if (!Reloader.idleCutoff) Reloader.idleCutoff = 1000 * 60 * 10; //10 minutes
+if (!Reloader.check) Reloader.check = 'everyStart'; //When to make additional checks for new code bunles.  everyStart or firstStart
+if (!Reloader.checkTimer) Reloader.checkTimer = 3000;  //How long to wait when checking for new files bundles.
+if (!Reloader.idleCutoff) Reloader.idleCutoff = 1000 * 60 * 10; //How long (in ms) can an app be idle before we consider it a start and not a resume. Defaults at 10 minutes.
 
 
 //Setup the updateAvailable reactiveVar
@@ -12,55 +11,69 @@ Reloader.updateAvailable = new ReactiveVar(false);
 //On fresh launch
 Meteor.startup(function() {
 
-	//Set the last start flag
-	localStorage.setItem('reloaderLastStart', Date.now());
-
 	//Hold the launch screen
-	let handle = LaunchScreen.hold();
+	const handle = LaunchScreen.hold();
 
-	var lastPause = Number(localStorage.getItem('reloaderLastPause'));
-	var idleCutoff = Number(Date.now() - Reloader.idleCutoff);
+	//Grab the last time we paused
+	const lastPause = Number(localStorage.getItem('reloaderLastPause'));
 
-	//Check if we came from a refresh AND we haven't been idle for longer than the cutoff
-	if (localStorage.getItem('reloaderWasRefreshed') && lastPause > idleCutoff) {
+	//Calculate the cutoff timestamp
+	const idleCutoff = Number(Date.now() - Reloader.idleCutoff);
 
-		//If this was a refresh, just release the launchscreen
+	//Check if we came from a refresh 
+	if ( localStorage.getItem('reloaderWasRefreshed') ) {
+
+		//If this was a refresh, just release the launchscreen (after a short delay to hide the white flash)
 		Meteor.setTimeout(function() {
 
 			handle.release();
 
-			//Reset the refreshed flag
+			//Reset the reloaderWasRefreshed flag
 			localStorage.removeItem('reloaderWasRefreshed');
 
-		 }, Reloader.releaseDelay); //Short delay helps with white flash
+		 }, 100); //Short delay helps with white flash
 
+	//Otherwise this should be treated as a cold start
 	} else {
 
-		//Check if we have a HCP after five seconds
-		Meteor.setTimeout(function() {
+		//Check if we need to check for an update (Either everyStart is set OR firstStart is set and it's our first start)
+		if ( Reloader.check === 'everyStart' || ( Reloader.check === 'firstStart' && !localStorage.getItem('reloaderLastStart') ) ) {
 
-			//If there is a new version available
-			if (Reloader.updateAvailable.get()) {
-
-				 //Reload to the latest version
-				 window.location.replace(window.location.href);
-				
-			} 
-			
-			//Release the launch screen
+			//Check if we have a HCP after the check timer is up
 			Meteor.setTimeout(function() {
+
+				//If there is a new version available
+				if (Reloader.updateAvailable.get()) {
+
+					//Reset the new version flag
+					Reloader.updateAvailable.set(false);
+
+					//Set the refresh flag
+					localStorage.setItem('reloaderWasRefreshed', Date.now());
+
+					//Reload the page
+					window.location.replace(window.location.href);
+					
+				} else {
+
+					handle.release();
+
+				}
 				
-				handle.release();
 
-				//Reset the new version flag
-			    Reloader.updateAvailable.set(false);
+			}, Reloader.checkTimer);
 
-			 }, Reloader.releaseDelay); //Short delay helps with white flash
+		} else {
 
+			//Otherwise just relase the splash screen
+			handle.release();
 
-		}, Reloader.downloadDelay);
+		}
 
 	}
+
+	//Set the last start flag
+	localStorage.setItem('reloaderLastStart', Date.now());
 
 });
 
@@ -68,27 +81,65 @@ Meteor.startup(function() {
 //Watch for the app resuming
 document.addEventListener("resume", function () {
 
-  //If there's a new version available
-  if (Reloader.updateAvailable.get()) {
+  	//Grab the last time we paused
+	const lastPause = Number(localStorage.getItem('reloaderLastPause'));
+
+	//Calculate the cutoff timestamp
+	const idleCutoff = Number(Date.now() - Reloader.idleCutoff);
+
+	//Check if the idleCutoff is set AND we exceeded the idleCutOff limit AND the everyStart check is set
+	if ( Reloader.idleCutoff && lastPause < idleCutoff && Reloader.check === 'everyStart') {
 
 		//Show the splashscreen
 		navigator.splashscreen.show();
-		
-		//Hide the splashschreen
+
+	  	//Check if we have a HCP after the check timer is up
 		Meteor.setTimeout(function() {
 
-			//Reset the newVersion flag
-			Reloader.updateAvailable.set(false);
+			//If there is a new version available
+			if (Reloader.updateAvailable.get()) {
+
+				//Reset the new version flag
+				Reloader.updateAvailable.set(false);
+
+				//Set the refresh flag
+				localStorage.setItem('reloaderWasRefreshed', Date.now());
+
+				//Reload the page
+				window.location.replace(window.location.href);
+				
+			} else {
+
+				//Hide the splashscreen
+				navigator.splashscreen.hide();
+
+			}
 			
-			//Set the refresh flag
+
+		}, Reloader.checkTimer);
+
+
+	 //If we don't need to do an additional check
+	 } else {
+
+	  	 //Check if there's a new version available already
+	  	 if (Reloader.updateAvailable.get()) {
+
+	  	 	//Show the splashscreen
+			navigator.splashscreen.show();
+
+	  	 	//Reset the new version flag
+			Reloader.updateAvailable.set(false);
+
+	  	 	//Set the refresh flag
 			localStorage.setItem('reloaderWasRefreshed', Date.now());
 			
 			//Refresh
 			window.location.replace(window.location.href);
-			
-		}, Reloader.resumeDelay);
 
-  }
+	  	} 
+
+	 }
 
 }, false);
 
@@ -103,11 +154,19 @@ document.addEventListener("pause", function() {
 
 //Capture the reload 
 Reload._onMigrate(function (retry) {
-	console.log('asd');
 
-	if (Reloader.instant) {
+	if (Reloader.refreshInstantly) {
 
-		return [true, {}];
+		//Show the splashscreen
+		navigator.splashscreen.show();
+
+		//Set the refresh flag
+		localStorage.setItem('reloaderWasRefreshed', Date.now());
+
+		//Reload the page
+		window.location.replace(window.location.href);
+
+		//return [true, {}];
 
 	} else {
 
@@ -134,15 +193,10 @@ $(document).on('click', '[reloader-update]', function(event) {
 	//Show the splashscreen
 	navigator.splashscreen.show();
 
-	//Hide the splashschreen
-	Meteor.setTimeout(function() {
+	//Set the refresh flag
+	localStorage.setItem('reloaderWasRefreshed', Date.now());
 
-		//Set the refresh flag
-		localStorage.setItem('reloaderWasRefreshed', Date.now());
-
-		//Refresh
-		window.location.replace(window.location.href);
-
-	}, Reloader.resumeDelay);
+	//Reload the page
+	window.location.replace(window.location.href);
 
 });
