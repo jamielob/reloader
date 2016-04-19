@@ -11,7 +11,7 @@ More control over hot code push reloading for your production apps.   Designed t
 No setup required, just add the package.  The default options are below. You can override them anywhere in your `client/lib` folder.
 
 ```
-Reloader.check = 'everyStart'; //'everyStart', 'firstStart' or false - when to make additional checks for new code bunles. 
+Reloader.check = 'everyStart'; //'everyStart', 'firstStart' or false - when to make additional checks for new code bundles. 
 Reloader.checkDelay = 3000;  //How long to wait when checking for new file bundles.  The app's splash screen is shown during this time.
 Reloader.idleCutoff = 1000 * 60 * 10; //How long (in ms) can an app be idle before we consider it a start and not a resume (and then follows check setting above). Defaults at 10 minutes.  Set to 0 to never do an additional check on resume.
 ```
@@ -27,13 +27,12 @@ If set, your app will have similar behaviour to the default in Meteor, with code
 
 
 
-
 ##Helpers
 
 `Reloader.updateAvailable` is a reactive variable that returns true when an update has been downloaded.
 
 ```
-Reloader.updateAvailable.get(); //Returns true if an update is ready
+Reloader.updateAvailable.get(); //Reactively returns true if an update is ready
 ```
 
 This package provides a template helper that retrieves the value of the reactiveVar easily.
@@ -44,7 +43,7 @@ This package provides a template helper that retrieves the value of the reactive
 {{/if}}
 ```
 
-It also provides an easy reload event that you can attach to a button that will show the splash screen and update to the latest version. Simply add the `reloader-update` attribute to a button.
+It also provides an easy reload event that you can attach to a button that will briefly show the splash screen and update to the latest version. Simply add the `reloader-update` attribute to a button.
 
 ```
 {{#if updateAvailable}}
