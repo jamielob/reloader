@@ -1,3 +1,0 @@
-// Reloader.configure({
-// 	refreshInstantly: true
-// });
