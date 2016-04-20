@@ -1,13 +1,28 @@
 Reloader = {
 
+	_options: {},
+
 	configure(options) {
 
-		if (options.check) check(options.check, String);
-		if (options.checkTimer) check(options.checkTimer, Number);
-		if (options.idleCutoff) check(options.idleCutoff, Number);
-		if (options.refreshInstantly) check(options.refreshInstantly, Boolean);
+		if (options.check) {
+			check(options.check, String);
+			this._options.check = options.check;
+		}
 
-		this._options = options;
+		if (options.checkTimer) {
+			check(options.checkTimer, Number);
+			this._options.checkTimer = options.checkTimer;
+		}
+
+		if (options.idleCutoff) {
+			check(options.idleCutoff, Number);
+			this._options.idleCutoff = options.idleCutoff;
+		}
+
+		if (options.refreshInstantly) {
+			check(options.refreshInstantly, Boolean);
+			this._options.refreshInstantly = options.refreshInstantly;
+		}
 
 	}
 
