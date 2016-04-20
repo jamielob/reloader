@@ -1,12 +1,12 @@
-#Reloader
+# Reloader
 
 More control over hot code push reloading for your production apps.   Designed to replace `mdg:reload-on-resume` and provide a more production-ready approach.
 
-##Installation
+## Installation
 
 `meteor add jamielob:reloader`
 
-##Setup
+## Setup
 
 No setup required, just add the package.  The default options are shown below. You can override them anywhere in your `client/lib` folder.
 
@@ -31,7 +31,7 @@ If set, your app will have similar behaviour to the default in Meteor, with code
 
 
 
-##Helpers
+## Helpers
 
 `Reloader.updateAvailable` is a reactive variable that returns true when an update has been downloaded.
 
