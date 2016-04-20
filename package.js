@@ -1,6 +1,6 @@
 Package.describe({
   name: 'jamielob:reloader',
-  version: '1.1.0',
+  version: '1.1.1',
   // Brief, one-line summary of the package.
   summary: 'More control over hot code push reloading',
   // URL to the Git repository containing the source code for this package.
