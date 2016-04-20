@@ -42,7 +42,10 @@ If set, your app will have similar behaviour to the default in Meteor, with code
 
 These helpers can help you to have an "Update Now" button.
 
-**A note about using these helpers**: Some people have reported having their app rejected during the Apple review process for having an "Update Now" button or similar as opposed to using the refresh on resume behaviour that this package provides by default.  If you really want to have an update button when new code is available, make sure you don't push any new code to the server until after your app has been approved.
+#### A note about using these helpers ####
+Some people have reported having their app rejected during the Apple review process for having an "Update Now" button or similar as opposed to using the refresh on resume behavior that this package provides by default.  If you really want to have an update button when new code is available, make sure you don't push any new code to the server until after your app has been approved. But it's probably safer/better to simply not have an update button at all!
+
+#### How to use them anyway ####
 
 `Reloader.updateAvailable` is a reactive variable that returns true when an update has been downloaded.
 
