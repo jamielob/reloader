@@ -1,8 +1,24 @@
-Reloader = {};
+Reloader = {
 
-if (!Reloader.check) Reloader.check = 'everyStart'; //When to make additional checks for new code bunles.  everyStart or firstStart
-if (!Reloader.checkTimer) Reloader.checkTimer = 3000;  //How long to wait when checking for new files bundles.
-if (!Reloader.idleCutoff) Reloader.idleCutoff = 1000 * 60 * 10; //How long (in ms) can an app be idle before we consider it a start and not a resume. Defaults at 10 minutes.
+	configure(options) {
+
+		if (options.check) check(options.check, String);
+		if (options.checkTimer) check(options.checkTimer, Number);
+		if (options.idleCutoff) check(options.idleCutoff, Number);
+		if (options.refreshInstantly) check(options.refreshInstantly, Boolean);
+
+		this._options = options;
+
+	}
+
+}
+
+//Set the defaults
+Reloader.configure({
+	check: 'everyStart', //When to make additional checks for new code bunles.  'everyStart', 'firstStart' or false.
+	checkTimer: 3000, //How long to wait when checking for new files bundles.
+	idleCutoff: 1000 * 60 & 10 //How long (in ms) can an app be idle before we do an additional check for new files. Defaults at 10 minutes.  Set to 0 to never do an additional check on resume.
+});
 
 
 //Setup the updateAvailable reactiveVar
@@ -18,7 +34,7 @@ Meteor.startup(function() {
 	const lastPause = Number(localStorage.getItem('reloaderLastPause'));
 
 	//Calculate the cutoff timestamp
-	const idleCutoff = Number(Date.now() - Reloader.idleCutoff);
+	const idleCutoff = Number( Date.now() - Reloader._options.idleCutoff );
 
 	//Check if we came from a refresh 
 	if ( localStorage.getItem('reloaderWasRefreshed') ) {
@@ -37,7 +53,7 @@ Meteor.startup(function() {
 	} else {
 
 		//Check if we need to check for an update (Either everyStart is set OR firstStart is set and it's our first start)
-		if ( Reloader.check === 'everyStart' || ( Reloader.check === 'firstStart' && !localStorage.getItem('reloaderLastStart') ) ) {
+		if ( Reloader._options.check === 'everyStart' || ( Reloader._options.check === 'firstStart' && !localStorage.getItem('reloaderLastStart') ) ) {
 
 			//Check if we have a HCP after the check timer is up
 			Meteor.setTimeout(function() {
@@ -56,12 +72,13 @@ Meteor.startup(function() {
 					
 				} else {
 
+					//Just release the splash screen
 					handle.release();
 
 				}
 				
 
-			}, Reloader.checkTimer);
+			}, Reloader._options.checkTimer );
 
 		} else {
 
@@ -85,10 +102,10 @@ document.addEventListener("resume", function () {
 	const lastPause = Number(localStorage.getItem('reloaderLastPause'));
 
 	//Calculate the cutoff timestamp
-	const idleCutoff = Number(Date.now() - Reloader.idleCutoff);
+	const idleCutoff = Number( Date.now() - Reloader._options.idleCutoff );
 
 	//Check if the idleCutoff is set AND we exceeded the idleCutOff limit AND the everyStart check is set
-	if ( Reloader.idleCutoff && lastPause < idleCutoff && Reloader.check === 'everyStart') {
+	if ( Reloader._options.idleCutoff && lastPause < idleCutoff && Reloader._options.check === 'everyStart') {
 
 		//Show the splashscreen
 		navigator.splashscreen.show();
@@ -116,7 +133,7 @@ document.addEventListener("resume", function () {
 			}
 			
 
-		}, Reloader.checkTimer);
+		}, Reloader._options.checkTimer);
 
 
 	 //If we don't need to do an additional check
@@ -155,7 +172,7 @@ document.addEventListener("pause", function() {
 //Capture the reload 
 Reload._onMigrate(function (retry) {
 
-	if (Reloader.refreshInstantly) {
+	if (Reloader._options.refreshInstantly) {
 
 		//Show the splashscreen
 		navigator.splashscreen.show();

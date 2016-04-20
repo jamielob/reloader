@@ -17,6 +17,7 @@ Cordova.depends({
 Package.onUse(function(api) {
   api.versionsFrom('1.3.1');
   api.use('ecmascript');
+  api.use('check');
   api.use('reload', 'web.cordova');
   api.use('templating', 'web.cordova');
   api.use('reactive-var', 'web.cordova');

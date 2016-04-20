@@ -31,7 +31,7 @@ htmljs@1.0.8
 http@1.1.4
 id-map@1.0.6
 insecure@1.0.6
-jamielob:reloader@0.0.1
+jamielob:reloader@1.0.0
 jquery@1.11.7
 launch-screen@1.0.10
 livedata@1.0.17
