@@ -25,7 +25,7 @@ Another popular configuration is:
 
 ```
 Reloader.configure({
-	check: 'firstStart', //Only check for new code the first ever time the app starts
+	check: 'firstStart', //Only make an additonal check the first time the app ever starts
 	checkTimer: 5000,  //Wait 5 seconds to see if new code is available on first start
 	refresh: 'start' //Only refresh to already downloaded code on a start and not a resume
 });
