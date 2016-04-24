@@ -36,7 +36,7 @@ Reloader = {
 //Set the defaults
 Reloader.configure({
 	check: 'everyStart',
-	checkTimer: 5000,
+	checkTimer: 3000,
 	refresh: 'startAndResume',
 	idleCutoff: 1000 * 60 * 10 //10 minutes
 });
