@@ -33,67 +33,67 @@ Reloader = {
 
 }
 
-//Set the defaults
+// Set the defaults
 Reloader.configure({
 	check: 'everyStart',
 	checkTimer: 3000,
 	refresh: 'startAndResume',
-	idleCutoff: 1000 * 60 * 10 //10 minutes
+	idleCutoff: 1000 * 60 * 10 // 10 minutes
 });
 
 
-//Setup the updateAvailable reactiveVar
+// Setup the updateAvailable reactiveVar
 Reloader.updateAvailable = new ReactiveVar(false);
 
-//On fresh launch
+// On fresh launch
 Meteor.startup(function() {
 
-	//Hold the launch screen
+	// Hold the launch screen
 	const handle = LaunchScreen.hold();
 
-	//Grab the last time we paused
+	// Grab the last time we paused
 	const lastPause = Number(localStorage.getItem('reloaderLastPause'));
 
-	//Calculate the cutoff timestamp
+	// Calculate the cutoff timestamp
 	const idleCutoff = Number( Date.now() - Reloader._options.idleCutoff );
 
-	//Check if we came from a refresh 
+	// Check if we came from a refresh 
 	if ( localStorage.getItem('reloaderWasRefreshed') ) {
 
-		//If this was a refresh, just release the launchscreen (after a short delay to hide the white flash)
+		// If this was a refresh, just release the launchscreen (after a short delay to hide the white flash)
 		Meteor.setTimeout(function() {
 
 			handle.release();
 
-			//Reset the reloaderWasRefreshed flag
+			// Reset the reloaderWasRefreshed flag
 			localStorage.removeItem('reloaderWasRefreshed');
 
-		 }, 100); //Short delay helps with white flash
+		 }, 100); // Short delay helps with white flash
 
-	//Otherwise this should be treated as a cold start
+	// Otherwise this should be treated as a cold start
 	} else {
 
-		//Check if we need to check for an update (Either everyStart is set OR firstStart is set and it's our first start)
+		// Check if we need to check for an update (Either everyStart is set OR firstStart is set and it's our first start)
 		if ( Reloader._options.check === 'everyStart' || ( Reloader._options.check === 'firstStart' && !localStorage.getItem('reloaderLastStart') ) ) {
 
-			//Check if we have a HCP after the check timer is up
+			// Check if we have a HCP after the check timer is up
 			Meteor.setTimeout(function() {
 
-				//If there is a new version available
+				// If there is a new version available
 				if (Reloader.updateAvailable.get()) {
 
-					//Reset the new version flag
+					// Reset the new version flag
 					Reloader.updateAvailable.set(false);
 
-					//Set the refresh flag
+					// Set the refresh flag
 					localStorage.setItem('reloaderWasRefreshed', Date.now());
 
-					//Reload the page
+					// Reload the page
 					window.location.replace(window.location.href);
 					
 				} else {
 
-					//Just release the splash screen
+					// Just release the splash screen
 					handle.release();
 
 				}
@@ -103,52 +103,52 @@ Meteor.startup(function() {
 
 		} else {
 
-			//Otherwise just relase the splash screen
+			// Otherwise just relase the splash screen
 			handle.release();
 
 		}
 
 	}
 
-	//Set the last start flag
+	// Set the last start flag
 	localStorage.setItem('reloaderLastStart', Date.now());
 
 });
 
 
-//Watch for the app resuming
+// Watch for the app resuming
 document.addEventListener("resume", function () {
 
-  	//Grab the last time we paused
+  	// Grab the last time we paused
 	const lastPause = Number(localStorage.getItem('reloaderLastPause'));
 
-	//Calculate the cutoff timestamp
+	// Calculate the cutoff timestamp
 	const idleCutoff = Number( Date.now() - Reloader._options.idleCutoff );
 
-	//Check if the idleCutoff is set AND we exceeded the idleCutOff limit AND the everyStart check is set
+	// Check if the idleCutoff is set AND we exceeded the idleCutOff limit AND the everyStart check is set
 	if ( Reloader._options.idleCutoff && lastPause < idleCutoff && Reloader._options.check === 'everyStart') {
 
-		//Show the splashscreen
+		// Show the splashscreen
 		navigator.splashscreen.show();
 
-	  	//Check if we have a HCP after the check timer is up
+	  	// Check if we have a HCP after the check timer is up
 		Meteor.setTimeout(function() {
 
-			//If there is a new version available
+			// If there is a new version available
 			if (Reloader.updateAvailable.get()) {
 
-				//Reset the new version flag
+				// Reset the new version flag
 				Reloader.updateAvailable.set(false);
 
-				//Set the refresh flag
+				// Set the refresh flag
 				localStorage.setItem('reloaderWasRefreshed', Date.now());
 
-				//Reload the page
+				// Reload the page
 				window.location.replace(window.location.href);
 				
 			} else {
 
-				//Hide the splashscreen
+				// Hide the splashscreen
 				navigator.splashscreen.hide();
 
 			}
@@ -157,22 +157,22 @@ document.addEventListener("resume", function () {
 		}, Reloader._options.checkTimer);
 
 
-	 //If we don't need to do an additional check
+	 // If we don't need to do an additional check
 	 } else {
 
-	  	 //Check if there's a new version available already AND we need to refresh on resume
+	  	 // Check if there's a new version available already AND we need to refresh on resume
 	  	 if ( Reloader.updateAvailable.get() && Reloader._options.refresh === 'startAndResume' ) {
 
-	  	 	//Show the splashscreen
+	  	 	// Show the splashscreen
 			navigator.splashscreen.show();
 
-	  	 	//Reset the new version flag
+	  	 	// Reset the new version flag
 			Reloader.updateAvailable.set(false);
 
-	  	 	//Set the refresh flag
+	  	 	// Set the refresh flag
 			localStorage.setItem('reloaderWasRefreshed', Date.now());
 			
-			//Refresh
+			// Refresh
 			window.location.replace(window.location.href);
 
 	  	} 
@@ -183,35 +183,35 @@ document.addEventListener("resume", function () {
 
 
 
-//Watch for the device pausing
+// Watch for the device pausing
 document.addEventListener("pause", function() {
-	//Save to localStorage
+	// Save to localStorage
 	localStorage.setItem('reloaderLastPause', Date.now());
 }, false);
 
 
-//Capture the reload 
+// Capture the reload 
 Reload._onMigrate(function (retry) {
 
 	if (Reloader._options.refreshInstantly) {
 
-		//Show the splashscreen
+		// Show the splashscreen
 		navigator.splashscreen.show();
 
-		//Set the refresh flag
+		// Set the refresh flag
 		localStorage.setItem('reloaderWasRefreshed', Date.now());
 
-		//Reload the page
+		// Reload the page
 		window.location.replace(window.location.href);
 
-		//return [true, {}];
+		// return [true, {}];
 
 	} else {
 
-		//Set the flag
+		// Set the flag
 		Reloader.updateAvailable.set(true);
 
-		//Don't refresh yet
+		// Don't refresh yet
 		return false;
 
 	}
@@ -220,21 +220,21 @@ Reload._onMigrate(function (retry) {
 });
 
 
-//Update available template helper
+// Update available template helper
 Template.registerHelper("updateAvailable", function() {
 	return Reloader.updateAvailable.get();
 });
 
-//Update available event
+// Update available event
 $(document).on('click', '[reloader-update]', function(event) {
 
-	//Show the splashscreen
+	// Show the splashscreen
 	navigator.splashscreen.show();
 
-	//Set the refresh flag
+	// Set the refresh flag
 	localStorage.setItem('reloaderWasRefreshed', Date.now());
 
-	//Reload the page
+	// Reload the page
 	window.location.replace(window.location.href);
 
 });

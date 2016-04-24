@@ -12,10 +12,10 @@ No setup required, just add the package.  The default options are shown below. Y
 
 ```
 Reloader.configure({
-	check: 'everyStart', //Check for new code every time the app starts 
-	checkTimer: 3000,  //Wait 3 seconds to see if new code is available
-	refresh: 'startAndResume', //Refresh to already downloaded code on both start and resume
-	idleCutoff: 1000 * 60 * 10  //Wait 10 minutes before treating a resume as a start
+	check: 'everyStart', // Check for new code every time the app starts 
+	checkTimer: 3000,  // Wait 3 seconds to see if new code is available
+	refresh: 'startAndResume', // Refresh to already downloaded code on both start and resume
+	idleCutoff: 1000 * 60 * 10  // Wait 10 minutes before treating a resume as a start
 });
 ```
 
@@ -25,9 +25,9 @@ Another popular configuration is:
 
 ```
 Reloader.configure({
-	check: 'firstStart', //Only make an additonal check the first time the app ever starts
-	checkTimer: 5000,  //Wait 5 seconds to see if new code is available on first start
-	refresh: 'start' //Only refresh to already downloaded code on a start and not a resume
+	check: 'firstStart', // Only make an additonal check the first time the app ever starts
+	checkTimer: 5000,  // Wait 5 seconds to see if new code is available on first start
+	refresh: 'start' // Only refresh to already downloaded code on a start and not a resume
 });
 ```
 
@@ -76,7 +76,7 @@ Some people have reported having their app rejected during the Apple review proc
 `Reloader.updateAvailable` is a reactive variable that returns true when an update has been downloaded.
 
 ```
-Reloader.updateAvailable.get(); //Reactively returns true if an update is ready
+Reloader.updateAvailable.get(); // Reactively returns true if an update is ready
 ```
 
 This package provides a template helper that retrieves the value of the reactiveVar easily.
