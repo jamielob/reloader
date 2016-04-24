@@ -14,6 +14,11 @@ Reloader = {
 			this._options.checkTimer = options.checkTimer;
 		}
 
+		if (options.refresh) {
+			check(options.refresh, String);
+			this._options.refresh = options.refresh;
+		}
+
 		if (options.idleCutoff) {
 			check(options.idleCutoff, Number);
 			this._options.idleCutoff = options.idleCutoff;
@@ -30,8 +35,9 @@ Reloader = {
 
 //Set the defaults
 Reloader.configure({
-	check: 'everyStart', 
-	checkTimer: 3000,
+	check: 'everyStart',
+	checkTimer: 5000,
+	refresh: 'startAndResume',
 	idleCutoff: 1000 * 60 * 10 //10 minutes
 });
 
@@ -154,8 +160,8 @@ document.addEventListener("resume", function () {
 	 //If we don't need to do an additional check
 	 } else {
 
-	  	 //Check if there's a new version available already
-	  	 if (Reloader.updateAvailable.get()) {
+	  	 //Check if there's a new version available already AND we need to refresh on resume
+	  	 if ( Reloader.updateAvailable.get() && Reloader._options.refresh === 'startAndResume' ) {
 
 	  	 	//Show the splashscreen
 			navigator.splashscreen.show();
