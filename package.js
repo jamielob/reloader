@@ -18,7 +18,8 @@ Package.onUse(function(api) {
   api.use('reload', 'web.cordova');
   api.use('templating', 'web.cordova');
   api.use('reactive-var', 'web.cordova');
-  api.use('launch-screen', 'web.cordova');
+
+  api.imply('launch-screen', 'client');
 
   api.mainModule('reloader.js', 'web.cordova');
 
