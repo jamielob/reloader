@@ -18,7 +18,9 @@ Package.onUse(function(api) {
   api.use('reload', 'web.cordova');
   api.use('templating', 'web.cordova');
   api.use('reactive-var', 'web.cordova');
+  api.use('tracker', 'web.cordova');
 
+  // So that the app can reference Launchscreen
   api.imply('launch-screen', 'client');
 
   api.mainModule('reloader.js', 'web.cordova');

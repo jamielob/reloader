@@ -69,25 +69,49 @@ Reloader = {
 		);
 	},
 
-	_checkForUpdate() {
+	_waitForUpdate(computation) {
 		// Check if we have a HCP after the check timer is up
 		Meteor.setTimeout(() => {
 
 			// If there is a new version available
 			if (this.updateAvailable.get()) {
 
-				// Reset the new version flag
-				this.updateAvailable.set(false);
-
 				this.reload();
 
 			} else {
+
+				// Stop waiting for update
+				if (computation) {
+					computation.stop()
+				}
 
 				launchScreen.release();
 
 			}
 			
 		}, this._options.checkTimer );
+	},
+
+	_checkForUpdate() {
+		if (this.updateAvailable.get()) {
+
+			// Check for an even newer update
+			this._waitForUpdate()
+
+		} else {
+			
+			// Wait until update is available, or give up on timeout
+			Tracker.autorun((c) => {
+
+				if (this.updateAvailable.get()) {
+					this.reload();
+				}
+
+				this._waitForUpdate(c)
+
+			});
+
+		}
 	},
 
 	_onPageLoad() {
