@@ -1,11 +1,11 @@
 # Reloader
 
-More control over hot code push reloading for your mobile apps. A replacement for `[mdg:reload-on-resume](https://github.com/meteor/mobile-packages/blob/master/packages/mdg:reload-on-resume/README.md)` with more options and better UX.
+More control over hot code push reloading for your mobile apps. A replacement for [`mdg:reload-on-resume`](https://github.com/meteor/mobile-packages/blob/master/packages/mdg:reload-on-resume/README.md) with more options and better UX.
 
 As of Meteor 1.3, if you prevent instant reloading on updates, the newest version of the code will be used on your app's next cold start - no reload necessary. This can be achieved with `Reloader.configure({check: false, refresh: 'start'})`. However, you can also:
-- Reload on resume, to update to the newest version of the code when the app is returned from the background: see `[refresh](#refresh)` (the launch screen it put back up during such reloads to hide the white screen you get with `mdg:reload-on-resume`)
-- On start or resume, leave the launch screen up and wait to see whether there is an update available: see [`check`](#check), `[checkTimer](#checktimer)`, and `[idleCutoff](#idlecutoff)`
-- Delay removal of the launch screen, to hide the white screen that appears at the beginning of a reload: see `[launchScreenDelay](#launchscreendelay)`
+- Reload on resume, to update to the newest version of the code when the app is returned from the background: see [`refresh`](#refresh) (the launch screen it put back up during such reloads to hide the white screen you get with `mdg:reload-on-resume`)
+- On start or resume, leave the launch screen up and wait to see whether there is an update available: see [`check`](#check), [`checkTimer`](#checktimer), and [`idleCutoff`](#idlecutoff)
+- Delay removal of the launch screen, to hide the white screen that appears at the beginning of a reload: see [`launchScreenDelay`](#launchscreendelay)
 
 
 - [Configure](#configure)
@@ -28,7 +28,7 @@ If you have any calls to `location.reload()` or `location.replace(location.href)
 
 ## Configure
 
-The default options are shown below. You can override them anywhere in your `client/lib` folder.
+The default options are shown below. You can override them anywhere in your `client/` folder.
 
 ```
 Reloader.configure({
@@ -101,11 +101,13 @@ Template.post.onRendered(() => {
 });
 ```
 
+Or if you have a layout template, you could put a single `.release()` in that template's `onRendered`.
+
 ## Helpers
 
 These helpers can help you to have an "Update Now" button.
 
-#### A note about using these helpers
+### A note about using these helpers
 Some people have reported having their app rejected during the Apple review process for having an "Update Now" button or similar as opposed to using the refresh on resume behavior that this package provides by default.  If you really want to have an update button when new code is available, make sure you don't push any new code to the server until after your app has been approved. But it's probably safer/better to simply not have an update button at all!
 
 ### How to use them anyway
