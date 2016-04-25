@@ -1,12 +1,8 @@
 Package.describe({
   name: 'jamielob:reloader',
   version: '1.1.5',
-  // Brief, one-line summary of the package.
   summary: 'More control over hot code push reloading',
-  // URL to the Git repository containing the source code for this package.
   git: 'https://github.com/jamielob/reloader/',
-  // By default, Meteor will default to using README.md for documentation.
-  // To avoid submitting documentation, set this field to null.
   documentation: 'README.md'
 });
 

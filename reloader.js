@@ -45,75 +45,70 @@ Reloader.configure({
 // Setup the updateAvailable reactiveVar
 Reloader.updateAvailable = new ReactiveVar(false);
 
-// On fresh launch
-Meteor.startup(function() {
+// Hold the launch screen
+const handle = LaunchScreen.hold();
 
-	// Hold the launch screen
-	const handle = LaunchScreen.hold();
+// Grab the last time we paused
+const lastPause = Number(localStorage.getItem('reloaderLastPause'));
 
-	// Grab the last time we paused
-	const lastPause = Number(localStorage.getItem('reloaderLastPause'));
+// Calculate the cutoff timestamp
+const idleCutoff = Number( Date.now() - Reloader._options.idleCutoff );
 
-	// Calculate the cutoff timestamp
-	const idleCutoff = Number( Date.now() - Reloader._options.idleCutoff );
+// Check if we came from a refresh 
+if ( localStorage.getItem('reloaderWasRefreshed') ) {
 
-	// Check if we came from a refresh 
-	if ( localStorage.getItem('reloaderWasRefreshed') ) {
+	// If this was a refresh, just release the launchscreen (after a short delay to hide the white flash)
+	Meteor.setTimeout(function() {
 
-		// If this was a refresh, just release the launchscreen (after a short delay to hide the white flash)
-		Meteor.setTimeout(function() {
+		handle.release();
 
-			handle.release();
+		// Reset the reloaderWasRefreshed flag
+		localStorage.removeItem('reloaderWasRefreshed');
 
-			// Reset the reloaderWasRefreshed flag
-			localStorage.removeItem('reloaderWasRefreshed');
-
-		 }, 100); // Short delay helps with white flash
+	}, 100); // Short delay helps with white flash
 
 	// Otherwise this should be treated as a cold start
+} else {
+
+	// Check if we need to check for an update (Either everyStart is set OR firstStart is set and it's our first start)
+	if ( Reloader._options.check === 'everyStart' || ( Reloader._options.check === 'firstStart' && !localStorage.getItem('reloaderLastStart') ) ) {
+
+		// Check if we have a HCP after the check timer is up
+		Meteor.setTimeout(function() {
+
+			// If there is a new version available
+			if (Reloader.updateAvailable.get()) {
+
+				// Reset the new version flag
+				Reloader.updateAvailable.set(false);
+
+				// Set the refresh flag
+				localStorage.setItem('reloaderWasRefreshed', Date.now());
+
+				// Reload the page
+				window.location.replace(window.location.href);
+				
+			} else {
+
+				// Just release the splash screen
+				handle.release();
+
+			}
+			
+
+		}, Reloader._options.checkTimer );
+
 	} else {
 
-		// Check if we need to check for an update (Either everyStart is set OR firstStart is set and it's our first start)
-		if ( Reloader._options.check === 'everyStart' || ( Reloader._options.check === 'firstStart' && !localStorage.getItem('reloaderLastStart') ) ) {
-
-			// Check if we have a HCP after the check timer is up
-			Meteor.setTimeout(function() {
-
-				// If there is a new version available
-				if (Reloader.updateAvailable.get()) {
-
-					// Reset the new version flag
-					Reloader.updateAvailable.set(false);
-
-					// Set the refresh flag
-					localStorage.setItem('reloaderWasRefreshed', Date.now());
-
-					// Reload the page
-					window.location.replace(window.location.href);
-					
-				} else {
-
-					// Just release the splash screen
-					handle.release();
-
-				}
-				
-
-			}, Reloader._options.checkTimer );
-
-		} else {
-
-			// Otherwise just relase the splash screen
-			handle.release();
-
-		}
+		// Otherwise just relase the splash screen
+		handle.release();
 
 	}
 
-	// Set the last start flag
-	localStorage.setItem('reloaderLastStart', Date.now());
+}
 
-});
+// Set the last start flag
+localStorage.setItem('reloaderLastStart', Date.now());
 
 
 // Watch for the app resuming
