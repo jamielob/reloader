@@ -35,20 +35,68 @@ Reloader = {
 	},
 
 
-	// Either everyStart is set OR firstStart is set and it's our first start
-	_shouldCheckForUpdate() {
-		this._options.check === 'everyStart' ||
+	// Should check if a cold start and (either everyStart is set OR firstStart
+	// is set and it's our first start)
+	_shouldCheckForUpdateOnStart() {
+		const isColdStart = !localStorage.getItem('reloaderWasRefreshed');
+		return isColdStart &&
 			(
-				this._options.check === 'firstStart' &&
-					!localStorage.getItem('reloaderLastStart')
-			)
+				this._options.check === 'everyStart' ||
+					(
+						this._options.check === 'firstStart' &&
+							!localStorage.getItem('reloaderLastStart')
+					)
+			);
 	},
 
+	// Check if the idleCutoff is set AND we exceeded the idleCutOff limit AND the everyStart check is set
+	_shouldCheckForUpdateOnResume() {
+		// In case a pause event was missed, assume it didn't make the cutoff
+		if (!localStorage.getItem('reloaderLastPause')) {
+			return false;
+		}
+		
+		// Grab the last time we paused
+		const lastPause = Number(localStorage.getItem('reloaderLastPause'));
+
+		// Calculate the cutoff timestamp
+		const idleCutoffAt = Number( Date.now() - this._options.idleCutoff );
+
+		return (
+			this._options.idleCutoff &&
+				lastPause < idleCutoffAt &&
+				this._options.check === 'everyStart'
+		);
+	},
+
+	_checkForUpdate() {
+		// Check if we have a HCP after the check timer is up
+		Meteor.setTimeout(() => {
+
+			// If there is a new version available
+			if (this.updateAvailable.get()) {
+
+				// Reset the new version flag
+				this.updateAvailable.set(false);
+
+				this.reload();
+
+			} else {
+
+				launchScreen.release();
+
+			}
+			
+		}, this._options.checkTimer );
+	},
 
 	_onPageLoad() {
-		// If this was a refresh, just release the launchscreen (after a short delay to hide the white flash)
-		if ( localStorage.getItem('reloaderWasRefreshed') ) {
-
+		if (this._shouldCheckForUpdateOnStart()) {
+			
+			this._checkForUpdate();
+			
+		} else {
+			
 			Meteor.setTimeout(function() {
 
 				launchScreen.release();
@@ -56,129 +104,46 @@ Reloader = {
 				// Reset the reloaderWasRefreshed flag
 				localStorage.removeItem('reloaderWasRefreshed');
 
-			}, Reloader._options.launchScreenDelay); // Short delay helps with white flash
-
-			// Otherwise this should be treated as a cold start
-		} else {
-
-			if (shouldCheckForUpdate()) {
-
-				// Check if we have a HCP after the check timer is up
-				Meteor.setTimeout(function() {
-
-					// If there is a new version available
-					if (Reloader.updateAvailable.get()) {
-
-						// Reset the new version flag
-						Reloader.updateAvailable.set(false);
-
-						// Set the refresh flag
-						localStorage.setItem('reloaderWasRefreshed', Date.now());
-
-						// Reload the page
-						window.location.replace(window.location.href);
-						
-					} else {
-
-						// Just release the splash screen
-						launchScreen.release();
-
-					}
-					
-
-				}, Reloader._options.checkTimer );
-
-			} else {
-
-				// Otherwise just relase the splash screen
-				launchScreen.release();
-
-			}
+			}, this._options.launchScreenDelay); // Short delay helps with white flash
 
 		}
 	},
 
 	_onResume() {
-		// Grab the last time we paused
-		const lastPause = Number(localStorage.getItem('reloaderLastPause'));
+		const shouldCheck = this._shouldCheckForUpdateOnResume();
 
-		// Calculate the cutoff timestamp
-		const idleCutoffAt = Number( Date.now() - Reloader._options.idleCutoff );
+		localStorage.removeItem('reloaderLastPause');
 
-		// Check if the idleCutoff is set AND we exceeded the idleCutOff limit AND the everyStart check is set
-		if ( Reloader._options.idleCutoff && lastPause < idleCutoffAt && Reloader._options.check === 'everyStart') {
-
-			// Show the splashscreen
+		if (shouldCheck) {
+			
 			navigator.splashscreen.show();
 
-			// Check if we have a HCP after the check timer is up
-			Meteor.setTimeout(function() {
-
-				// If there is a new version available
-				if (Reloader.updateAvailable.get()) {
-
-					// Reset the new version flag
-					Reloader.updateAvailable.set(false);
-
-					// Set the refresh flag
-					localStorage.setItem('reloaderWasRefreshed', Date.now());
-
-					// Reload the page
-					window.location.replace(window.location.href);
-					
-				} else {
-
-					// Hide the splashscreen
-					navigator.splashscreen.hide();
-
-				}
-				
-
-			}, Reloader._options.checkTimer);
-
+			this._checkForUpdate();
 
 			// If we don't need to do an additional check
 		} else {
 
 			// Check if there's a new version available already AND we need to refresh on resume
-			if ( Reloader.updateAvailable.get() && Reloader._options.refresh === 'startAndResume' ) {
+			if ( this.updateAvailable.get() && this._options.refresh === 'startAndResume' ) {
 
-	  		// Show the splashscreen
-				navigator.splashscreen.show();
-
-	  		// Reset the new version flag
-				Reloader.updateAvailable.set(false);
-
-	  		// Set the refresh flag
-				localStorage.setItem('reloaderWasRefreshed', Date.now());
-				
-				// Refresh
-				window.location.replace(window.location.href);
+				this.reload();
 
 			} 
 
 		}
-
 	},
 
 	_onMigrate() {
-		if (Reloader._options.refreshInstantly) {
+		if (this._options.refreshInstantly) {
 
-			// Show the splashscreen
-			navigator.splashscreen.show();
-
-			// Set the refresh flag
-			localStorage.setItem('reloaderWasRefreshed', Date.now());
-
-			// Reload the page
-			window.location.replace(window.location.href);
+			this.reload();
 
 			// return [true, {}];
 
 		} else {
 
 			// Set the flag
-			Reloader.updateAvailable.set(true);
+			this.updateAvailable.set(true);
 
 			// Don't refresh yet
 			return false;
@@ -208,6 +173,8 @@ document.addEventListener("resume", function () {
 	Reloader._onResume();
 }, false);
 
+
+localStorage.removeItem('reloaderLastPause');
 
 // Watch for the device pausing
 document.addEventListener("pause", function() {
