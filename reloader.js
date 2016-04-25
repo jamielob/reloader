@@ -14,7 +14,6 @@ Reloader = {
 																					'start',
 																					'instantly')),
 			idleCutoff: Match.Optional(Match.Integer),
-			refreshInstantly: Match.Optional(Boolean),
 			launchScreenDelay: Match.Optional(Match.Integer),
 		});
 		
@@ -158,7 +157,7 @@ Reloader = {
 	},
 
 	_onMigrate() {
-		if (this._options.refreshInstantly) {
+		if (this._options.refresh === 'instantly') {
 
 			this.reload();
 

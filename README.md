@@ -3,7 +3,7 @@
 More control over hot code push reloading for your mobile apps. A replacement for [`mdg:reload-on-resume`](https://github.com/meteor/mobile-packages/blob/master/packages/mdg:reload-on-resume/README.md) with more options and better UX.
 
 As of Meteor 1.3, if you prevent instant reloading on updates, the newest version of the code will be used on your app's next cold start - no reload necessary. This can be achieved with `Reloader.configure({check: false, refresh: 'start'})`. However, you can also:
-- Reload on resume, to update to the newest version of the code when the app is returned from the background: see [`refresh`](#refresh) (the launch screen it put back up during such reloads to hide the white screen you get with `mdg:reload-on-resume`)
+- Reload on resume, to update to the newest version of the code when the app is returned from the background: see [`refresh`](#refresh) (the launch screen is put back up during such reloads to hide the white screen you get with `mdg:reload-on-resume`)
 - On start or resume, leave the launch screen up and wait to see whether there is an update available: see [`check`](#check), [`checkTimer`](#checktimer), and [`idleCutoff`](#idlecutoff)
 - Delay removal of the launch screen, to hide the white screen that appears at the beginning of a reload: see [`launchScreenDelay`](#launchscreendelay)
 
@@ -21,7 +21,7 @@ As of Meteor 1.3, if you prevent instant reloading on updates, the newest versio
   - [Reloader.reload()](#reloaderreload)
   - [reloader-update](#reloader-update)
 
-## Installation
+### Installation
 
 `meteor add jamielob:reloader`
 
