@@ -3,75 +3,64 @@ Reloader = {
 	_options: {},
 
 	configure(options) {
+		check(options, {
+			check: Match.Optional(Match.OneOf('everyStart',
+																				'firstStart',
+																				false)),
+			checkTimer: Match.Optional(Match.Integer),
+			refresh: Match.Optional(Match.OneOf('startAndResume',
+																					'start',
+																					'instantly')),
+			idleCutoff: Match.Optional(Match.Integer),
+			refreshInstantly: Match.Optional(Boolean),
+			launchScreenDelay: Match.Optional(Match.Integer),
+		});
+		
+		_.extend(this._options, options);
+	},
 
-		if (options.check) {
-			check(options.check, String);
-			this._options.check = options.check;
-		}
-
-		if (options.checkTimer) {
-			check(options.checkTimer, Number);
-			this._options.checkTimer = options.checkTimer;
-		}
-
-		if (options.refresh) {
-			check(options.refresh, String);
-			this._options.refresh = options.refresh;
-		}
-
-		if (options.idleCutoff) {
-			check(options.idleCutoff, Number);
-			this._options.idleCutoff = options.idleCutoff;
-		}
-
-		if (options.refreshInstantly) {
-			check(options.refreshInstantly, Boolean);
-			this._options.refreshInstantly = options.refreshInstantly;
-		}
-
-	}
-
-}
+  updateAvailable: new ReactiveVar(false)
+};
 
 // Set the defaults
 Reloader.configure({
 	check: 'everyStart',
 	checkTimer: 3000,
 	refresh: 'startAndResume',
-	idleCutoff: 1000 * 60 * 10 // 10 minutes
+	idleCutoff: 1000 * 60 * 10, // 10 minutes
+	launchScreenDelay: 100
 });
 
 
-// Setup the updateAvailable reactiveVar
-Reloader.updateAvailable = new ReactiveVar(false);
+// Either everyStart is set OR firstStart is set and it's our first start
+const shouldCheckForUpdate = () => {
+	Reloader._options.check === 'everyStart' ||
+		(
+			Reloader._options.check === 'firstStart' &&
+			!localStorage.getItem('reloaderLastStart')
+		)
+};
 
-// Hold the launch screen
-const handle = LaunchScreen.hold();
+const launchScreen = LaunchScreen.hold();
 
-// Grab the last time we paused
 const lastPause = Number(localStorage.getItem('reloaderLastPause'));
 
-// Calculate the cutoff timestamp
-const idleCutoff = Number( Date.now() - Reloader._options.idleCutoff );
-
-// Check if we came from a refresh 
+// If this was a refresh, just release the launchscreen (after a short delay to hide the white flash)
 if ( localStorage.getItem('reloaderWasRefreshed') ) {
 
-	// If this was a refresh, just release the launchscreen (after a short delay to hide the white flash)
 	Meteor.setTimeout(function() {
 
-		handle.release();
+		launchScreen.release();
 
 		// Reset the reloaderWasRefreshed flag
 		localStorage.removeItem('reloaderWasRefreshed');
 
-	}, 100); // Short delay helps with white flash
+	}, Reloader._options.launchScreenDelay); // Short delay helps with white flash
 
 	// Otherwise this should be treated as a cold start
 } else {
 
-	// Check if we need to check for an update (Either everyStart is set OR firstStart is set and it's our first start)
-	if ( Reloader._options.check === 'everyStart' || ( Reloader._options.check === 'firstStart' && !localStorage.getItem('reloaderLastStart') ) ) {
+	if (shouldCheckForUpdate()) {
 
 		// Check if we have a HCP after the check timer is up
 		Meteor.setTimeout(function() {
@@ -91,7 +80,7 @@ if ( localStorage.getItem('reloaderWasRefreshed') ) {
 			} else {
 
 				// Just release the splash screen
-				handle.release();
+				launchScreen.release();
 
 			}
 			
@@ -101,7 +90,7 @@ if ( localStorage.getItem('reloaderWasRefreshed') ) {
 	} else {
 
 		// Otherwise just relase the splash screen
-		handle.release();
+		launchScreen.release();
 
 	}
 
@@ -118,10 +107,10 @@ document.addEventListener("resume", function () {
 	const lastPause = Number(localStorage.getItem('reloaderLastPause'));
 
 	// Calculate the cutoff timestamp
-	const idleCutoff = Number( Date.now() - Reloader._options.idleCutoff );
+	const idleCutoffAt = Number( Date.now() - Reloader._options.idleCutoff );
 
 	// Check if the idleCutoff is set AND we exceeded the idleCutOff limit AND the everyStart check is set
-	if ( Reloader._options.idleCutoff && lastPause < idleCutoff && Reloader._options.check === 'everyStart') {
+	if ( Reloader._options.idleCutoff && lastPause < idleCutoffAt && Reloader._options.check === 'everyStart') {
 
 		// Show the splashscreen
 		navigator.splashscreen.show();
