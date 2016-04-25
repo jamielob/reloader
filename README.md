@@ -7,6 +7,7 @@ As of Meteor 1.3, if you prevent instant reloading on updates, the newest versio
 - On start or resume, leave the launch screen up and wait to see whether there is an update available: see [`check`](#check), [`checkTimer`](#checktimer), and [`idleCutoff`](#idlecutoff)
 - Delay removal of the launch screen, to hide the white screen that appears at the beginning of a reload: see [`launchScreenDelay`](#launchscreendelay)
 
+### Contents
 
 - [Configure](#configure)
   - [check](#check)
