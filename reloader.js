@@ -221,3 +221,6 @@ Template.registerHelper("updateAvailable", function() {
 $(document).on('click', '[reloader-update]', function(event) {
 	Reloader.reload();
 });
+
+
+export Reloader

@@ -20,6 +20,9 @@ As of Meteor 1.3, if you prevent instant reloading on updates, the newest versio
   - [{{updateAvailable}}](#updateavailable)
   - [Reloader.reload()](#reloaderreload)
   - [reloader-update](#reloader-update)
+- [Development](#development)
+  - [Run tests](#run-tests)
+  - [Credits](#credits)
 
 ### Installation
 
@@ -117,7 +120,7 @@ Some people have reported having their app rejected during the Apple review proc
 
 `Reloader.updateAvailable` is a reactive variable that returns true when an update has been downloaded.
 
-```
+```js
 Reloader.updateAvailable.get(); // Reactively returns true if an update is ready
 ```
 
@@ -125,7 +128,7 @@ Reloader.updateAvailable.get(); // Reactively returns true if an update is ready
 
 This package provides a Blaze template helper that retrieves the value of the reactiveVar easily.
 
-```
+```html
 {{#if updateAvailable}}
   	<p>Update available!</p>
 {{/if}}
@@ -139,11 +142,25 @@ Call `Reloader.reload()` to refresh the page.
 
 This package also provides an easy reload event that you can attach to a button that will briefly show the splash screen and update to the latest version. Simply add the `reloader-update` attribute to a button.
 
-```
+```html
 {{#if updateAvailable}}
 	<a class="button" reloader-update>Tap here to update!</a>
 {{/if}}
 ```
 
+## Development
 
+### Run tests
 
+```bash
+git clone git@github.com:jamielob/reloader.git
+cd reloader
+meteor test-packages ./ --driver-package practicalmeteor:mocha
+open localhost:3000
+```
+
+### Credits
+
+[Contributors](https://github.com/jamielob/reloader/graphs/contributors)
+
+And thanks to @martijnwalraven for his help with this packages and superb work on Meteor Cordova! 👏

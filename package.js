@@ -26,5 +26,19 @@ Package.onUse(function(api) {
   api.mainModule('reloader.js', 'web.cordova');
 
   api.export('Reloader');
+});
 
+
+Package.onTest(function(api) {
+  Npm.depends({
+    sinon: '1.17.3'
+  });
+
+  api.use('jamielob:reloader')
+
+  api.use(['ecmascript',
+           'underscore',
+           'practicalmeteor:mocha']);
+
+  api.mainModule('reloader-tests.js');
 });
