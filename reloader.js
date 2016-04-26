@@ -6,13 +6,9 @@ Reloader = {
 
 	configure(options) {
 		check(options, {
-			check: Match.Optional(Match.OneOf('everyStart',
-																				'firstStart',
-																				false)),
+			check: Match.Optional(Match.OneOf('everyStart', 'firstStart', false)),
 			checkTimer: Match.Optional(Match.Integer),
-			refresh: Match.Optional(Match.OneOf('startAndResume',
-																					'start',
-																					'instantly')),
+			refresh: Match.Optional(Match.OneOf('startAndResume', 'start', 'instantly')),
 			idleCutoff: Match.Optional(Match.Integer),
 			launchScreenDelay: Match.Optional(Match.Integer),
 		});
