@@ -12,20 +12,21 @@ Cordova.depends({
 
 Package.onUse(function(api) {
   api.versionsFrom('1.3.1');
-  api.use('ecmascript');
-  api.use('check');
-  api.use('underscore', 'web.cordova');
-  api.use('reload', 'web.cordova');
-  api.use('templating', 'web.cordova');
-  api.use('reactive-var', 'web.cordova');
-  api.use('tracker', 'web.cordova');
+
+  api.use(['ecmascript',
+           'check',
+           'underscore',
+           'reload',
+           'templating',
+           'reactive-var',
+           'tracker'], 'client');
 
   // So that the app can reference LaunchScreen
   api.imply('launch-screen', 'client');
 
-  api.mainModule('reloader.js', 'web.cordova');
+  api.mainModule('reloader.js', 'client');
 
-  api.export('Reloader');
+  api.export('Reloader', 'client');
 });
 
 
@@ -34,11 +35,11 @@ Package.onTest(function(api) {
     sinon: '1.17.3'
   });
 
-  api.use('jamielob:reloader')
+  api.use('jamielob:reloader', 'client')
 
   api.use(['ecmascript',
            'underscore',
-           'practicalmeteor:mocha']);
+           'practicalmeteor:mocha'], 'client');
 
-  api.mainModule('reloader-tests.js');
+  api.mainModule('reloader-tests.js', 'client');
 });

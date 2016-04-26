@@ -222,5 +222,3 @@ $(document).on('click', '[reloader-update]', function(event) {
 	Reloader.reload();
 });
 
-
-export Reloader

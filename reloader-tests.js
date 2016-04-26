@@ -1,6 +1,4 @@
-console.log('Reloader 1', Reloader)
-import {Reloader} from 'meteor/jamielob:reloader'
-console.log('Reloader 2', Reloader)
+console.log('Reloader', Reloader)
 
 import { _ } from 'meteor/underscore';
 import { assert } from 'meteor/practicalmeteor:chai';
