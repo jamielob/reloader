@@ -1,6 +1,6 @@
 Package.describe({
   name: 'jamielob:reloader',
-  version: '1.1.5',
+  version: '1.2.0',
   summary: 'More control over hot code push reloading',
   git: 'https://github.com/jamielob/reloader/',
   documentation: 'README.md'
@@ -19,22 +19,20 @@ Package.onUse(function(api) {
            'reload',
            'templating',
            'reactive-var',
-           'tracker'], 'client');
-
-  // So that the app can reference LaunchScreen
-  api.imply('launch-screen', 'client');
+           'tracker',
+           'launch-screen'], 'client');
 
   api.mainModule('reloader.js', 'client');
 
   api.export('Reloader', 'client');
 });
 
+// No way to make this only happen onTest
+Npm.depends({
+  sinon: '1.17.3'
+});
 
 Package.onTest(function(api) {
-  Npm.depends({
-    sinon: '1.17.3'
-  });
-
   api.use('jamielob:reloader', 'client')
 
   api.use(['ecmascript',
