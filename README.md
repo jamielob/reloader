@@ -40,7 +40,6 @@ Reloader.configure({
 	checkTimer: 3000,  // Wait 3 seconds to see if new code is available
 	refresh: 'startAndResume', // Refresh to already downloaded code on both start and resume
 	idleCutoff: 1000 * 60 * 10  // Wait 10 minutes before treating a resume as a start
-    launchScreenDelay: 100 // After reload, wait 100ms before hiding the launch screen
 });
 ```
 
@@ -88,6 +87,8 @@ Default: `1000 * 60 * 10 // 10 minutes`
 How long (in ms) can an app be idle before we consider it a start and not a resume. Applies only when `check: 'everyStart'`. Set to `0` to never check on resume.
 
 ### launchScreenDelay
+
+**Planned option for future version. Currently not configurable.**
 
 Default: `100`
 
