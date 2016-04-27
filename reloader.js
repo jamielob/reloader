@@ -16,7 +16,11 @@ Reloader = {
 		_.extend(this._options, options);
 	},
 
-  updateAvailable: new ReactiveVar(false),
+  _updateAvailable: new ReactiveVar(false),
+
+	updateAvailable() {
+		this._updateAvailable.get()
+	},
 
 	reload() {
 		// Show the splashscreen
@@ -69,7 +73,7 @@ Reloader = {
 		Meteor.setTimeout(() => {
 
 			// If there is a new version available
-			if (this.updateAvailable.get()) {
+			if (this.updateAvailable()) {
 
 				this.reload();
 
@@ -88,7 +92,7 @@ Reloader = {
 	},
 
 	_checkForUpdate() {
-		if (this.updateAvailable.get()) {
+		if (this.updateAvailable()) {
 
 			// Check for an even newer update
 			this._waitForUpdate()
@@ -98,7 +102,7 @@ Reloader = {
 			// Wait until update is available, or give up on timeout
 			Tracker.autorun((c) => {
 
-				if (this.updateAvailable.get()) {
+				if (this.updateAvailable()) {
 					this.reload();
 				}
 
@@ -143,7 +147,7 @@ Reloader = {
 		} else {
 
 			// Check if there's a new version available already AND we need to refresh on resume
-			if ( this.updateAvailable.get() && this._options.refresh === 'startAndResume' ) {
+			if ( this.updateAvailable() && this._options.refresh === 'startAndResume' ) {
 
 				this.reload();
 
@@ -162,7 +166,7 @@ Reloader = {
 		} else {
 
 			// Set the flag
-			this.updateAvailable.set(true);
+			this._updateAvailable.set(true);
 
 			// Don't refresh yet
 			return false;
@@ -210,7 +214,7 @@ Reload._onMigrate(function (retry) {
 
 // Update available template helper
 Template.registerHelper("updateAvailable", function() {
-	return Reloader.updateAvailable.get();
+	return Reloader.updateAvailable();
 });
 
 // Update available event

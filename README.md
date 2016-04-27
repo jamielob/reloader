@@ -16,7 +16,7 @@ As of Meteor 1.3, if you prevent instant reloading on updates, the newest versio
   - [idleCutoff](#idlecutoff)
   - [launchScreenDelay](#launchscreendelay)
 - [Helpers](#helpers)
-  - [Reloader.updateAvailable.get()](#reloaderupdateavailableget)
+  - [Reloader.updateAvailable()](#reloaderupdateavailable)
   - [{{updateAvailable}}](#updateavailable)
   - [Reloader.reload()](#reloaderreload)
   - [reloader-update](#reloader-update)
@@ -116,12 +116,10 @@ Some people have reported having their app rejected during the Apple review proc
 
 ### How to use them anyway
 
-#### Reloader.updateAvailable.get()
-
-`Reloader.updateAvailable` is a reactive variable that returns true when an update has been downloaded.
+#### Reloader.updateAvailable()
 
 ```js
-Reloader.updateAvailable.get(); // Reactively returns true if an update is ready
+Reloader.updateAvailable() // Reactively returns true if an update is ready
 ```
 
 #### {{updateAvailable}}
