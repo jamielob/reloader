@@ -91,7 +91,7 @@ How long (in ms) can an app be idle before we consider it a start and not a resu
 
 Default: `100`
 
-How long to wait (in ms) after reload before hiding the launch screen. The goal is to leave it up until your page has finished rendering, so the user does not see a blank white screen. The duration will vary based on your app's render time and the speed of the device. To be more precise, set `launchScreenDelay` to 0 and release the launch screen yourself when the page has rendered. For example, if the only two pages that might be displayed on reload are `index` and `post`, then you would do:
+How long to wait (in ms) after reload before hiding the launch screen. The goal is to leave it up until your page has finished rendering, so the user does not see a blank white screen. The duration will vary based on your app's render time and the speed of the device. To be more precise, set `launchScreenDelay` to 0 and release the launch screen yourself when the page has rendered. Install the package with `meteor add launch-screen`, and then for example if the only two pages that might be displayed on reload are `index` and `post`, you would do:
 
 ```javascript
 launchScreenHandle = Launchscreen.hold()
