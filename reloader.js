@@ -9,7 +9,8 @@ Reloader = {
       check: Match.Optional(Match.OneOf('everyStart', 'firstStart', false)),
       checkTimer: Match.Optional(Match.Integer),
       reload: Match.Optional(Match.OneOf('startAndResume', 'start', 'instantly')),
-      idleCutoff: Match.Optional(Match.Integer),
+      resumeMethod: Match.Optional(Match.OneOf('eventAndTimer', 'event', 'timer')),
+      resumeTimer: Match.Optional(Match.Integer),
       launchScreenDelay: Match.Optional(Match.Integer),
     });
 
@@ -147,10 +148,10 @@ Reloader = {
 
 // Set the defaults
 Reloader.configure({
-  check: 'everyStart',
-  checkTimer: 3000,
-  reload: 'startAndResume',
-  idleCutoff: 1000 * 60 * 10, // 10 minutes
+  check: false,
+  reload: 'start',
+  resumeMethod: 'eventAndTimer',
+  resumeTimer: 1000 * 60 * 60, // 1 hour
   launchScreenDelay: 100,
 });
 
