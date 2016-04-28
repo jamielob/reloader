@@ -8,7 +8,7 @@ Reloader = {
     check(options, {
       check: Match.Optional(Match.OneOf('everyStart', 'firstStart', false)),
       checkTimer: Match.Optional(Match.Integer),
-      refresh: Match.Optional(Match.OneOf('startAndResume', 'start', 'instantly')),
+      reload: Match.Optional(Match.OneOf('startAndResume', 'start', 'instantly')),
       idleCutoff: Match.Optional(Match.Integer),
       launchScreenDelay: Match.Optional(Match.Integer),
     });
@@ -26,8 +26,8 @@ Reloader = {
     // Show the splashscreen
     navigator.splashscreen.show();
 
-    // Set the refresh flag
-    localStorage.setItem('reloaderWasRefreshed', Date.now());
+    // Set the reload flag
+    localStorage.setItem('reloaderWasReloaded', Date.now());
 
     // Reload the page
     window.location.replace(window.location.href);
@@ -36,7 +36,7 @@ Reloader = {
 
   // Should check if everyStart is set OR firstStart is set and it's our first start
   _shouldCheckForUpdateOnStart() {
-    const isColdStart = !localStorage.getItem('reloaderWasRefreshed');
+    const isColdStart = !localStorage.getItem('reloaderWasReloaded');
     return isColdStart &&
       (
         this._options.check === 'everyStart' ||
@@ -106,8 +106,8 @@ Reloader = {
       Meteor.setTimeout(() => {
         launchScreen.release();
 
-        // Reset the reloaderWasRefreshed flag
-        localStorage.removeItem('reloaderWasRefreshed');
+        // Reset the reloaderWasReloaded flag
+        localStorage.removeItem('reloaderWasReloaded');
       }, this._options.launchScreenDelay);
     }
   },
@@ -123,22 +123,22 @@ Reloader = {
 
       // If we don't need to do an additional check
     } else {
-      // Check if there's a new version available already AND we need to refresh on resume
-      if (this.updateAvailable() && this._options.refresh === 'startAndResume') {
+      // Check if there's a new version available already AND we need to reload on resume
+      if (this.updateAvailable() && this._options.reload === 'startAndResume') {
         this.reload();
       }
     }
   },
 
   _onMigrate() {
-    if (this._options.refresh === 'instantly') {
+    if (this._options.reload === 'instantly') {
       this.reload();
       // return [true, {}];
     } else {
       // Set the flag
       this._updateAvailable.set(true);
 
-      // Don't refresh yet
+      // Don't reload yet
       return false;
     }
   },
@@ -149,7 +149,7 @@ Reloader = {
 Reloader.configure({
   check: 'everyStart',
   checkTimer: 3000,
-  refresh: 'startAndResume',
+  reload: 'startAndResume',
   idleCutoff: 1000 * 60 * 10, // 10 minutes
   launchScreenDelay: 100,
 });
