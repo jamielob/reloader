@@ -34,7 +34,7 @@ Reloader = {
   },
 
 
-  // Should check IF either everyStart is set OR firstStart is set AND it's our first start
+  // Should check if everyStart is set OR firstStart is set and it's our first start
   _shouldCheckForUpdateOnStart() {
     const isColdStart = !localStorage.getItem('reloaderWasRefreshed');
     return isColdStart &&
@@ -88,12 +88,12 @@ Reloader = {
       this._waitForUpdate();
     } else {
       // Wait until update is available, or give up on timeout
-      Tracker.autorun((c) => {
+      Tracker.autorun((computation) => {
         if (this.updateAvailable()) {
           this.reload();
         }
 
-        this._waitForUpdate(c);
+        this._waitForUpdate(computation);
       });
     }
   },
@@ -102,13 +102,12 @@ Reloader = {
     if (this._shouldCheckForUpdateOnStart()) {
       this._checkForUpdate();
     } else {
+      // Short delay helps with white flash
       Meteor.setTimeout(() => {
         launchScreen.release();
 
         // Reset the reloaderWasRefreshed flag
         localStorage.removeItem('reloaderWasRefreshed');
-
-        // Short delay helps with white flash
       }, this._options.launchScreenDelay);
     }
   },
