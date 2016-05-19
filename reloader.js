@@ -20,7 +20,7 @@ Reloader = {
   _updateAvailable: new ReactiveVar(false),
 
   updateAvailable() {
-    this._updateAvailable.get();
+    return this._updateAvailable.get();
   },
 
   reload() {
