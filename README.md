@@ -74,7 +74,7 @@ How long to wait (in ms) when making additional checks for new file bundles. In 
 
 ### refresh
 
-When to refresh to the latest code bundle if one was downloaded while using the app.  The app splash screen is shown during the refresh. Possible values are:
+When to refresh to the latest code bundle if one finished downloading after the end of the `check` period. The app splash screen is shown during the refresh. Possible values are:
 
 - `startAndResume` (default): Refresh to the latest bundle both when starting and resuming the app.
 - `start`: Refresh only when the app is started (not resumed).
