@@ -26,7 +26,10 @@ As of Meteor 1.3, if you prevent instant reloading on updates, the newest versio
 
 ### Installation
 
-`meteor add jamielob:reloader`
+```sh
+meteor add jamielob:reloader
+meteor remove mdg:reload-on-resume
+```
 
 If you have any calls to `location.reload()` or `location.replace(location.href)` in your app, replace them with `Reloader.reload()`.
 
@@ -34,12 +37,12 @@ If you have any calls to `location.reload()` or `location.replace(location.href)
 
 The default options are shown below. You can override them anywhere in your `client/` folder.
 
-```
+```js
 Reloader.configure({
-	check: 'everyStart', // Check for new code every time the app starts 
-	checkTimer: 3000,  // Wait 3 seconds to see if new code is available
-	refresh: 'startAndResume', // Refresh to already downloaded code on both start and resume
-	idleCutoff: 1000 * 60 * 10  // Wait 10 minutes before treating a resume as a start
+  check: 'everyStart', // Check for new code every time the app starts 
+  checkTimer: 3000,  // Wait 3 seconds to see if new code is available
+  refresh: 'startAndResume', // Refresh to already downloaded code on both start and resume
+  idleCutoff: 1000 * 60 * 10  // Wait 10 minutes before treating a resume as a start
 });
 ```
 
@@ -47,16 +50,30 @@ These default options will make sure that your app is up to date every time a us
 
 Another popular configuration is:
 
-```
+```js
 Reloader.configure({
-	check: 'firstStart', // Only make an additonal check the first time the app ever starts
-	checkTimer: 5000,  // Wait 5 seconds to see if new code is available on first start
-	refresh: 'start' // Only refresh to already downloaded code on a start and not a resume
+  check: 'firstStart', // Only make an additonal check the first time the app ever starts
+  checkTimer: 5000,  // Wait 5 seconds to see if new code is available on first start
+  refresh: 'start' // Only refresh to already downloaded code on a start and not a resume
 });
 ```
 
 This will make sure the first time your app is run it is up to date, will download new versions of code while the app is being used, and then only update when the app is next started.
 
+You can have a different configuration for development, for instance:
+
+```js
+if (Meteor.isDevelopment) {
+  Reloader.configure({
+    check: false, // don't check on startup
+    refresh: 'instantly' // refresh as soon as updates are available
+  });
+} else {
+  Reloader.configure({
+    // production configuration
+  });
+}
+```
 
 ### check
 
