@@ -18,14 +18,16 @@ Reloader = {
 
   updateAvailable: new ReactiveVar(false),
 
-  reload() {
+  prereload() {
     // Show the splashscreen
     navigator.splashscreen.show();
 
     // Set the refresh flag
     localStorage.setItem('reloaderWasRefreshed', Date.now());
+  },
 
-    // Reload the page
+  reload() {
+    this.prereload()
     window.location.replace(window.location.href);
   },
 
@@ -152,12 +154,13 @@ Reloader = {
     }
   },
 
-  _onMigrate() {
+  // https://github.com/meteor/meteor/blob/devel/packages/reload/reload.js#L104-L122
+  _onMigrate(retry) {
     if (this._options.refresh === 'instantly') {
 
-      this.reload();
+      this.prereload()
 
-      // return [true, {}];
+      return [true, {}];
 
     } else {
 
@@ -165,7 +168,7 @@ Reloader = {
       this.updateAvailable.set(true);
 
       // Don't refresh yet
-      return false;
+      return [false];
 
     }
   }
@@ -203,8 +206,8 @@ document.addEventListener("pause", function() {
 
 
 // Capture the reload
-Reload._onMigrate(function (retry) {
-  Reloader._onMigrate();
+Reload._onMigrate('jamielob:reloader', function (retry) {
+  return Reloader._onMigrate(retry);
 });
 
 
