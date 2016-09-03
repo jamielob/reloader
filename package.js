@@ -1,6 +1,6 @@
 Package.describe({
   name: 'jamielob:reloader',
-  version: '1.2.0',
+  version: '1.2.1',
   summary: 'More control over hot code push reloading',
   git: 'https://github.com/jamielob/reloader/',
   documentation: 'README.md'
@@ -22,7 +22,8 @@ Package.onUse(function(api) {
            'tracker',
            'launch-screen'], 'client');
 
-  api.mainModule('reloader.js', 'client');
+  api.mainModule('reloader.js', 'web.cordova');
+  api.mainModule('browser.js', 'web.browser');
 
   api.export('Reloader', 'client');
 });
