@@ -24,6 +24,8 @@ Package.onUse(function(api) {
 
   api.mainModule('reloader.js', 'web.cordova');
   api.mainModule('browser.js', 'web.browser');
+  //  when testing, uncomment this line:
+  // api.mainModule('reloader.js', 'client');
 
   api.export('Reloader', 'client');
 });

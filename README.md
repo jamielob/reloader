@@ -39,14 +39,14 @@ The default options are shown below. You can override them anywhere in your `cli
 
 ```js
 Reloader.configure({
-  check: 'everyStart', // Check for new code every time the app starts 
+  check: 'everyStart', // Check for new code every time the app starts
   checkTimer: 3000,  // Wait 3 seconds to see if new code is available
   refresh: 'startAndResume', // Refresh to already downloaded code on both start and resume
   idleCutoff: 1000 * 60 * 10  // Wait 10 minutes before treating a resume as a start
 });
 ```
 
-These default options will make sure that your app is up to date every time a user starts your app, or comes back to it after 10 minutes of being idle. 
+These default options will make sure that your app is up to date every time a user starts your app, or comes back to it after 10 minutes of being idle.
 
 Another popular configuration is:
 
@@ -173,6 +173,7 @@ This package also provides an easy reload event that you can attach to a button 
 ```bash
 git clone git@github.com:jamielob/reloader.git
 cd reloader
+# uncomment the noted line in package.js
 meteor test-packages ./ --driver-package practicalmeteor:mocha
 open localhost:3000
 ```
