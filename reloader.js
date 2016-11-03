@@ -93,6 +93,7 @@ Reloader = {
         }
 
         launchScreen.release();
+        navigator.splashscreen.hide();
 
       }
 
