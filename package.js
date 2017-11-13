@@ -1,13 +1,13 @@
 Package.describe({
   name: 'jamielob:reloader',
-  version: '1.2.3',
+  version: '1.3.0',
   summary: 'More control over hot code push reloading',
   git: 'https://github.com/jamielob/reloader/',
   documentation: 'README.md'
 });
 
 Cordova.depends({
-  'cordova-plugin-splashscreen': '4.0.0'
+  'cordova-plugin-splashscreen': '4.1.0'
 });
 
 Package.onUse(function(api) {
